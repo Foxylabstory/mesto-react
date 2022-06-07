@@ -10,12 +10,9 @@ export default function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
-  //const [isPopupClose, setIsPopupClose] = React.useState(false);
 
   function handleEditAvatarClick() {
-    console.log(`before: ${isEditAvatarPopupOpen}`);
     setIsEditAvatarPopupOpen(!isEditAvatarPopupOpen);
-    console.log(`after: ${isEditAvatarPopupOpen}`);
   }
 
   function handleEditProfileClick() {
@@ -27,7 +24,6 @@ export default function App() {
   }
 
   function closeAllPopup() {
-    //setIsPopupClose(!isPopupClose);
     setIsEditAvatarPopupOpen(false);
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
