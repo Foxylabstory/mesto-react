@@ -71,23 +71,6 @@ export default function App() {
       <PopupWithForm name="confirm" title="Вы уверены?" buttonText="Да" containerType="popup__container_input_noinputs" isOpen={false} onClose={closeAllPopup}></PopupWithForm>
 
       <ImagePopup />
-
-      
-      <template className="element" id="element-template">
-        <div className="element">
-          <div className="element__ordering">
-            <img className="element__image" src="#" alt="" />
-            <button className="element__delete"></button>
-            <div className="element__caption-group">
-              <h2 className="element__caption"> </h2>
-              <div className="element__like-container">
-                <button className="element__like" type="button"></button>
-                <span className="element__like-quantity" id="like-quantity"></span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </template>
     </div>
   );
 }
