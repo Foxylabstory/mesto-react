@@ -1,4 +1,5 @@
 //import logo from './logo.svg';
+import React from "react";
 import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
@@ -6,16 +7,38 @@ import PopupWithForm from "./PopupWithForm";
 import ImagePopup from "./ImagePopup";
 
 export default function App() {
+  const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
+  const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
+  const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
+  //const [isPopupClose, setIsPopupClose] = React.useState(false);
 
+  function handleEditAvatarClick() {
+    console.log(`before: ${isEditAvatarPopupOpen}`);
+    setIsEditAvatarPopupOpen(!isEditAvatarPopupOpen);
+    console.log(`after: ${isEditAvatarPopupOpen}`);
+  }
+
+  function handleEditProfileClick() {
+    setIsEditProfilePopupOpen(!isEditProfilePopupOpen);
+  }
+
+  function handleAddPlaceClick() {
+    setIsAddPlacePopupOpen(!isAddPlacePopupOpen);
+  }
+
+  function closeAllPopup() {
+    //setIsPopupClose(!isPopupClose);
+    setIsEditAvatarPopupOpen(false);
+    setIsEditProfilePopupOpen(false);
+    setIsAddPlacePopupOpen(false);
+  }
   
-
-
   return (
     <div className="page">
       <Header />
-      <Main />
+      <Main onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick} onEditAvatar={handleEditAvatarClick} />
       <Footer />
-      <PopupWithForm name="profile" title="Редактировать профиль" buttonText="Сохранить" containerType="popup__container_input_double">
+      <PopupWithForm name="profile" title="Редактировать профиль" buttonText="Сохранить" containerType="popup__container_input_double" isOpen={isEditProfilePopupOpen} onClose={closeAllPopup}>
         <label className="popup__hidden-label" htmlFor="name-profile">
           Ваше имя
         </label>
@@ -28,7 +51,7 @@ export default function App() {
         <span id="description-profile-error" className="popup__input-error"></span>
       </PopupWithForm>
 
-      <PopupWithForm name="avatar" title="Обновить аватар" buttonText="Сохранить" containerType="popup__container_input_single">
+      <PopupWithForm name="avatar" title="Обновить аватар" buttonText="Сохранить" containerType="popup__container_input_single" isOpen={isEditAvatarPopupOpen} onClose={closeAllPopup}>
         <label className="popup__hidden-label" htmlFor="link-avatar">
           Ссылка на аватар
         </label>
@@ -36,7 +59,7 @@ export default function App() {
         <span id="link-avatar-error" className="popup__input-error"></span>
       </PopupWithForm>
 
-      <PopupWithForm name="card" title="Новое место" buttonText="Создать" containerType="popup__container_input_noinputs">
+      <PopupWithForm name="card" title="Новое место" buttonText="Создать" containerType="popup__container_input_noinputs" isOpen={isAddPlacePopupOpen} onClose={closeAllPopup}>
         <label className="popup__hidden-label" htmlFor="name-card">
           Название
         </label>
@@ -49,7 +72,7 @@ export default function App() {
         <span id="link-card-error" className="popup__input-error"></span>
       </PopupWithForm>
 
-      <PopupWithForm name="confirm" title="Вы уверены?" buttonText="Да" containerType="popup__container_input_noinputs"></PopupWithForm>
+      <PopupWithForm name="confirm" title="Вы уверены?" buttonText="Да" containerType="popup__container_input_noinputs" isOpen={false} onClose={closeAllPopup}></PopupWithForm>
 
       <ImagePopup />
 

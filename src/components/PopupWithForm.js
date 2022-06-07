@@ -2,7 +2,7 @@ export default function PopupWithForm(props) {
 
   return (
     <>
-      <div className={`popup popup_type_${props.name}`} id={props.name}>
+      <div className={`popup popup_type_${props.name} ` + (props.isOpen ? 'popup_opened' : '') } id={props.name}>
         <div className={`popup__container ${props.containerType}`}>
           <h2 className="popup__header">{props.title}</h2>
           <form
@@ -24,6 +24,7 @@ export default function PopupWithForm(props) {
             id={`${props.name}-closer`}
             type="button"
             aria-label="Закрыть форму"
+            onClick={props.onClose}
           ></button>
         </div>
       </div>
