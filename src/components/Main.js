@@ -10,7 +10,6 @@ export default function Main(props) {
 
   React.useEffect(() => {
     api.getInitialCards().then((data) => {
-      console.log(data);
       setCards(data.map((item)=>({
         src: item.link,
         name: item.name,
@@ -68,7 +67,7 @@ export default function Main(props) {
         </section>
 
         <section className="elements" aria-label="секция описывающая места">
-          {cards.map((card)=><Card src={card.src} name={card.name} key={card.keyId} likes={card.likes} />)}
+          {cards.map((card)=><Card src={card.src} name={card.name} key={card.keyId} likes={card.likes} onCardClick={props.onCardClick} />)}
         </section>
       </main>
     </>

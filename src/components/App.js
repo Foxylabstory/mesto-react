@@ -10,6 +10,7 @@ export default function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = React.useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = React.useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = React.useState(false);
+  const [selectedCard, setSelectedCard] = React.useState({name: '', link: ''});
 
   function handleEditAvatarClick() {
     setIsEditAvatarPopupOpen(!isEditAvatarPopupOpen);
@@ -23,16 +24,21 @@ export default function App() {
     setIsAddPlacePopupOpen(!isAddPlacePopupOpen);
   }
 
+  function handleCardClick(card) {
+    setSelectedCard({name: card.name, link: card.link});
+  }
+
   function closeAllPopup() {
     setIsEditAvatarPopupOpen(false);
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
+    setSelectedCard({name: '', link: ''});
   }
   
   return (
     <div className="page">
       <Header />
-      <Main onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick} onEditAvatar={handleEditAvatarClick} />
+      <Main onEditProfile={handleEditProfileClick} onAddPlace={handleAddPlaceClick} onEditAvatar={handleEditAvatarClick} onCardClick={handleCardClick} />
       <Footer />
       <PopupWithForm name="profile" title="Редактировать профиль" buttonText="Сохранить" containerType="popup__container_input_double" isOpen={isEditProfilePopupOpen} onClose={closeAllPopup}>
         <label className="popup__hidden-label" htmlFor="name-profile">
@@ -70,7 +76,7 @@ export default function App() {
 
       <PopupWithForm name="confirm" title="Вы уверены?" buttonText="Да" containerType="popup__container_input_noinputs" isOpen={false} onClose={closeAllPopup}></PopupWithForm>
 
-      <ImagePopup />
+      <ImagePopup card={selectedCard} onClose={closeAllPopup} />
     </div>
   );
 }
