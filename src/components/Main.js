@@ -1,14 +1,12 @@
 import { api } from "../utils/Api";
+import React from "react";
 import { useEffect, useState } from "react";
 import Card from "./Card";
+import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
 export default function Main(props) {
-  const [userName, setUserName] = useState("Загрузка");
-  const [userDescription, setUserDescription] = useState("информации");
-  const [userAvatar, setUserAvatar] = useState(
-    "http://localhost:3000/static/media/spinner.07a3b34f019158f7439b.gif"
-  );
   const [cards, setCards] = useState([]);
+  const currentUser = React.useContext(CurrentUserContext);
 
   useEffect(() => {
     api
@@ -18,26 +16,26 @@ export default function Main(props) {
           data.map((item) => ({
             src: item.link,
             name: item.name,
-            likes: item.likes.length,
+            likes: item.likes,
             keyId: item._id,
+            owner: item.owner
           }))
         );
       })
       .catch((error) => {
         console.log(error);
       });
-
-    api
-      .getUserInfo()
-      .then((data) => {
-        setUserName(data.name);
-        setUserDescription(data.about);
-        setUserAvatar(data.avatar);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
   }, []);
+
+  function handleCardLike(card) {
+    // Снова проверяем, есть ли уже лайк на этой карточке
+    const isLiked = card.likes.some(i => i._id === currentUser._id);
+    
+    // Отправляем запрос в API и получаем обновлённые данные карточки
+    api.changeLikeCardStatus(card._id, !isLiked).then((newCard) => {
+        setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
+    });
+} 
 
   return (
     <main className="main">
@@ -50,11 +48,11 @@ export default function Main(props) {
           className="profile__avatar"
           id="profileAvatar"
           onClick={props.onEditAvatar}
-          style={{ backgroundImage: `url(${userAvatar})` }}
+          style={{ backgroundImage: `url(${currentUser.avatar})` }}
         ></button>
         <div className="profile__info">
           <div className="profile__name-block">
-            <h1 className="profile__name">{userName}</h1>
+            <h1 className="profile__name">{currentUser.name}</h1>
             <button
               className="profile__edit-button"
               id="profile-edit-button"
@@ -62,7 +60,7 @@ export default function Main(props) {
               onClick={props.onEditProfile}
             ></button>
           </div>
-          <p className="profile__description">{userDescription}</p>
+          <p className="profile__description">{currentUser.about}</p>
         </div>
         <button
           className="profile__add-button"
@@ -79,6 +77,7 @@ export default function Main(props) {
             name={card.name}
             key={card.keyId}
             likes={card.likes}
+            owner={card.owner}
             onCardClick={props.onCardClick}
           />
         ))}
