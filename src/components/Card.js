@@ -13,11 +13,15 @@ export default function Card(props) {
     props.onCardLike(props);
   }
 
+  function handleDeleteClick() {
+    props.onCardDelete(props);
+  }
+
   return (
     <div className="element" key={props.keyId}>
       <div className="element__ordering">
         <img className="element__image" src={props.src} alt={props.name} onClick={handleClick} />
-        {isOwn && <button className="element__delete"></button>}
+        {isOwn && <button className="element__delete" onClick={handleDeleteClick}></button>}
         <div className="element__caption-group">
           <h2 className="element__caption">{props.name}</h2>
           <div className="element__like-container">

@@ -12,10 +12,7 @@ export default function Main(props) {
     api
       .getInitialCards()
       .then((data) => {
-        console.log(data);
-        setCards(
-          data.map((item) => (item))
-        );
+        setCards(data)
       })
       .catch((error) => {
         console.log(error);
@@ -23,26 +20,29 @@ export default function Main(props) {
   }, []);
 
   function handleCardLike(card) {
-    // Снова проверяем, есть ли уже лайк на этой карточке
     const isLiked = card.likes.some((i) => i._id === currentUser._id);
-    console.log(isLiked);
-    console.log(card.cardId);
-    // Отправляем запрос в API и получаем обновлённые данные карточки
     if (isLiked) {
       api.deleteLike(card.cardId).then((data) => {
-        console.log(data);
         setCards((state) => state.map((c) => (c._id === card.cardId ? data : c))
       );
       })
     } else {
       api.putLike(card.cardId).then((data) => {
-        console.log(data);
-        setCards((state) => state.map((c) => (c._id === card.cardId ? data : c))
-      );
+        setCards((state) => state.map((item) => (item._id === card.cardId ? data : item)));
       }).catch((error) => {
         console.log(error);
       });
     }
+  }
+
+  function handleCardDelete(card) {
+    api.deleteCard(card.cardId)
+    .then(() => {
+      setCards((state) => state.filter((item) => item._id !== card.cardId));
+    })
+    .catch((error) => {
+      console.log(error);
+    });
   }
 
   return (
@@ -89,6 +89,7 @@ export default function Main(props) {
             cardId={card._id}
             onCardClick={props.onCardClick}
             onCardLike={handleCardLike}
+            onCardDelete={handleCardDelete}
           />
         ))}
       </section>
