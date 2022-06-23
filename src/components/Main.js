@@ -12,14 +12,9 @@ export default function Main(props) {
     api
       .getInitialCards()
       .then((data) => {
+        console.log(data);
         setCards(
-          data.map((item) => ({
-            src: item.link,
-            name: item.name,
-            likes: item.likes,
-            keyId: item._id,
-            owner: item.owner
-          }))
+          data.map((item) => (item))
         );
       })
       .catch((error) => {
@@ -29,13 +24,26 @@ export default function Main(props) {
 
   function handleCardLike(card) {
     // Снова проверяем, есть ли уже лайк на этой карточке
-    const isLiked = card.likes.some(i => i._id === currentUser._id);
-    
+    const isLiked = card.likes.some((i) => i._id === currentUser._id);
+    console.log(isLiked);
+    console.log(card.cardId);
     // Отправляем запрос в API и получаем обновлённые данные карточки
-    api.changeLikeCardStatus(card._id, !isLiked).then((newCard) => {
-        setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
-    });
-} 
+    if (isLiked) {
+      api.deleteLike(card.cardId).then((data) => {
+        console.log(data);
+        setCards((state) => state.map((c) => (c._id === card.cardId ? data : c))
+      );
+      })
+    } else {
+      api.putLike(card.cardId).then((data) => {
+        console.log(data);
+        setCards((state) => state.map((c) => (c._id === card.cardId ? data : c))
+      );
+      }).catch((error) => {
+        console.log(error);
+      });
+    }
+  }
 
   return (
     <main className="main">
@@ -73,12 +81,14 @@ export default function Main(props) {
       <section className="elements" aria-label="секция описывающая места">
         {cards.map((card) => (
           <Card
-            src={card.src}
+            src={card.link}
             name={card.name}
-            key={card.keyId}
+            key={card._id}
             likes={card.likes}
             owner={card.owner}
+            cardId={card._id}
             onCardClick={props.onCardClick}
+            onCardLike={handleCardLike}
           />
         ))}
       </section>
