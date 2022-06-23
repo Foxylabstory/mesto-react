@@ -5,6 +5,7 @@ import Header from "./Header";
 import Main from "./Main";
 import Footer from "./Footer";
 import PopupWithForm from "./PopupWithForm";
+import EditProfilePopup from "./EditProfilePopup";
 import ImagePopup from "./ImagePopup";
 
 import { api } from "../utils/Api";
@@ -62,6 +63,22 @@ export default function App() {
     setSelectedCard({ name: "", link: "" });
   }
 
+  function handleUpdateUser(user) {
+    console.log(user);
+    api
+      .setUserInfoToApi(user)
+      .then((data) => {
+        setCurrentUser({
+          name: data.name,
+          about: data.about,
+          avatar: data.avatar,
+          _id: data._id,
+        });
+      })
+      .then(closeAllPopup())
+      .catch((error) => console.log(error));
+  }
+
   return (
     <div className="page">
       <CurrentUserContext.Provider value={currentUser}>
@@ -73,46 +90,12 @@ export default function App() {
           onCardClick={handleCardClick}
         />
         <Footer />
-        <PopupWithForm
-          name="profile"
-          title="Редактировать профиль"
-          buttonText="Сохранить"
-          containerType="popup__container_input_double"
+
+        <EditProfilePopup
           isOpen={isEditProfilePopupOpen}
           onClose={closeAllPopup}
-        >
-          <label className="popup__hidden-label" htmlFor="name-profile">
-            Ваше имя
-          </label>
-          <input
-            className="popup__input"
-            id="name-profile"
-            name="popupInputName"
-            type="text"
-            required
-            maxLength="40"
-            minLength="2"
-            placeholder="Введите ваше имя"
-          />
-          <span id="name-profile-error" className="popup__input-error"></span>
-          <label className="popup__hidden-label" htmlFor="description-profile">
-            О себе
-          </label>
-          <input
-            className="popup__input"
-            id="description-profile"
-            name="popupInputDescription"
-            type="text"
-            required
-            maxLength="200"
-            minLength="2"
-            placeholder="Расскажите о себе"
-          />
-          <span
-            id="description-profile-error"
-            className="popup__input-error"
-          ></span>
-        </PopupWithForm>
+          onUpdateUser={handleUpdateUser}
+        />
 
         <PopupWithForm
           name="avatar"

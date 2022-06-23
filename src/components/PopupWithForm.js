@@ -1,4 +1,5 @@
 export default function PopupWithForm(props) {
+  
   return (
     <div
       className={`popup popup_type_${props.name} ${props.isOpen && "popup_opened"}`}
@@ -12,10 +13,11 @@ export default function PopupWithForm(props) {
           name={props.name}
           autoComplete="on"
           noValidate
+          onSubmit={props.onSubmit}
         >
           <fieldset className="popup__fieldset">
             {props.children}
-            <button className="popup__button" type="submit" disabled>
+            <button className="popup__button" type="submit">
               {props.buttonText}
             </button>
           </fieldset>
