@@ -27,7 +27,6 @@ export default function EditProfilePopup(props) {
         name,
         about: description,
     });
-    console.log(`chpock`);
   }
 
   return (
