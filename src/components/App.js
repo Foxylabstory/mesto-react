@@ -7,6 +7,7 @@ import Footer from "./Footer";
 import PopupWithForm from "./PopupWithForm";
 import EditProfilePopup from "./EditProfilePopup";
 import EditAvatarPopup from "./EditAvatarPopup";
+import AddPlacePopup from "./AddPlacePopup";
 import ImagePopup from "./ImagePopup";
 
 import { api } from "../utils/Api";
@@ -24,6 +25,7 @@ export default function App() {
     avatar: " ",
     _id: " ",
   });
+  const [cards, setCards] = useState([]);
 
   useEffect(() => {
     api
@@ -35,6 +37,14 @@ export default function App() {
           avatar: data.avatar,
           _id: data._id,
         });
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    api
+      .getInitialCards()
+      .then((data) => {
+        setCards(data);
       })
       .catch((error) => {
         console.log(error);
@@ -80,7 +90,6 @@ export default function App() {
   }
 
   function handleUpdateAvatar(link) {
-    console.log(link);
     api
       .setUserPicToApi(link)
       .then((data) => {
@@ -95,6 +104,40 @@ export default function App() {
       .catch((error) => console.log(error));
   }
 
+  function handleCardLike(card) {
+    const isLiked = card.likes.some((i) => i._id === currentUser._id);
+    if (isLiked) {
+      api.deleteLike(card.cardId).then((data) => {
+        setCards((state) => state.map((c) => (c._id === card.cardId ? data : c))
+      );
+      })
+    } else {
+      api.putLike(card.cardId).then((data) => {
+        setCards((state) => state.map((item) => (item._id === card.cardId ? data : item)));
+      }).catch((error) => {
+        console.log(error);
+      });
+    }
+  }
+
+  function handleCardDelete(card) {
+    api.deleteCard(card.cardId)
+    .then(() => {
+      setCards((state) => state.filter((item) => item._id !== card.cardId));
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+  }
+
+  function handleAddPlaceSubmit(card) {
+    api.setNewCard(card).then((newCard) => {
+      setCards([newCard, ...cards]);
+    })
+    .then(closeAllPopup())
+    .catch((error) => console.log(error));
+  }
+
   return (
     <div className="page">
       <CurrentUserContext.Provider value={currentUser}>
@@ -104,6 +147,9 @@ export default function App() {
           onAddPlace={handleAddPlaceClick}
           onEditAvatar={handleEditAvatarClick}
           onCardClick={handleCardClick}
+          onCardLike={handleCardLike}
+          onCardDelete={handleCardDelete}
+          cards={cards}
         />
         <Footer />
 
@@ -119,41 +165,12 @@ export default function App() {
           onUpdateAvatar={handleUpdateAvatar}
         />
 
-        <PopupWithForm
-          name="card"
-          title="Новое место"
-          buttonText="Создать"
-          containerType="popup__container_input_noinputs"
-          isOpen={isAddPlacePopupOpen}
-          onClose={closeAllPopup}
-        >
-          <label className="popup__hidden-label" htmlFor="name-card">
-            Название
-          </label>
-          <input
-            className="popup__input"
-            id="name-card"
-            name="popupInputCard"
-            type="text"
-            required
-            maxLength="30"
-            minLength="2"
-            placeholder="Название"
-          />
-          <span id="name-card-error" className="popup__input-error"></span>
-          <label className="popup__hidden-label" htmlFor="link-card">
-            Ссылка на картинку
-          </label>
-          <input
-            className="popup__input"
-            id="link-card"
-            name="popupInputLink"
-            type="url"
-            required
-            placeholder="Ссылка на картинку"
-          />
-          <span id="link-card-error" className="popup__input-error"></span>
-        </PopupWithForm>
+        <AddPlacePopup
+        isOpen={isAddPlacePopupOpen}
+        onClose={closeAllPopup}
+        onAddPlace={handleAddPlaceSubmit}
+        />
+
 
         <PopupWithForm
           name="confirm"

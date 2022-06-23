@@ -1,48 +1,17 @@
-import { api } from "../utils/Api";
-import { useEffect, useState, useContext } from "react";
+import { useContext } from "react";
 import Card from "./Card";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 
-export default function Main(props) {
-  const [cards, setCards] = useState([]);
+export default function Main({
+  cards,
+  onEditAvatar,
+  onEditProfile,
+  onAddPlace,
+  onCardClick,
+  onCardLike,
+  onCardDelete,
+}) {
   const currentUser = useContext(CurrentUserContext);
-
-  useEffect(() => {
-    api
-      .getInitialCards()
-      .then((data) => {
-        setCards(data)
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }, []);
-
-  function handleCardLike(card) {
-    const isLiked = card.likes.some((i) => i._id === currentUser._id);
-    if (isLiked) {
-      api.deleteLike(card.cardId).then((data) => {
-        setCards((state) => state.map((c) => (c._id === card.cardId ? data : c))
-      );
-      })
-    } else {
-      api.putLike(card.cardId).then((data) => {
-        setCards((state) => state.map((item) => (item._id === card.cardId ? data : item)));
-      }).catch((error) => {
-        console.log(error);
-      });
-    }
-  }
-
-  function handleCardDelete(card) {
-    api.deleteCard(card.cardId)
-    .then(() => {
-      setCards((state) => state.filter((item) => item._id !== card.cardId));
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-  }
 
   return (
     <main className="main">
@@ -54,7 +23,7 @@ export default function Main(props) {
         <button
           className="profile__avatar"
           id="profileAvatar"
-          onClick={props.onEditAvatar}
+          onClick={onEditAvatar}
           style={{ backgroundImage: `url(${currentUser.avatar})` }}
         ></button>
         <div className="profile__info">
@@ -64,7 +33,7 @@ export default function Main(props) {
               className="profile__edit-button"
               id="profile-edit-button"
               type="button"
-              onClick={props.onEditProfile}
+              onClick={onEditProfile}
             ></button>
           </div>
           <p className="profile__description">{currentUser.about}</p>
@@ -73,7 +42,7 @@ export default function Main(props) {
           className="profile__add-button"
           id="profile-add-button"
           type="button"
-          onClick={props.onAddPlace}
+          onClick={onAddPlace}
         ></button>
       </section>
 
@@ -86,9 +55,9 @@ export default function Main(props) {
             likes={card.likes}
             owner={card.owner}
             cardId={card._id}
-            onCardClick={props.onCardClick}
-            onCardLike={handleCardLike}
-            onCardDelete={handleCardDelete}
+            onCardClick={onCardClick}
+            onCardLike={onCardLike}
+            onCardDelete={onCardDelete}
           />
         ))}
       </section>
