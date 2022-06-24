@@ -28,7 +28,7 @@ export default function PopupWithForm(props) {
           type="button"
           aria-label="Закрыть форму"
           onClick={props.onClose}
-        ></button>
+        />
       </div>
     </div>
   );

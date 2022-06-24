@@ -25,7 +25,7 @@ export default function Main({
           id="profileAvatar"
           onClick={onEditAvatar}
           style={{ backgroundImage: `url(${currentUser.avatar})` }}
-        ></button>
+        />
         <div className="profile__info">
           <div className="profile__name-block">
             <h1 className="profile__name">{currentUser.name}</h1>
@@ -34,7 +34,7 @@ export default function Main({
               id="profile-edit-button"
               type="button"
               onClick={onEditProfile}
-            ></button>
+            />
           </div>
           <p className="profile__description">{currentUser.about}</p>
         </div>
@@ -43,7 +43,7 @@ export default function Main({
           id="profile-add-button"
           type="button"
           onClick={onAddPlace}
-        ></button>
+        />
       </section>
 
       <section className="elements" aria-label="секция описывающая места">

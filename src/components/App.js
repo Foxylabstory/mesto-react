@@ -31,12 +31,7 @@ export default function App() {
     api
       .getUserInfo()
       .then((data) => {
-        setCurrentUser({
-          name: data.name,
-          about: data.about,
-          avatar: data.avatar,
-          _id: data._id,
-        });
+        setCurrentUser(data);
       })
       .catch((error) => {
         console.log(error);
@@ -93,12 +88,7 @@ export default function App() {
     api
       .setUserPicToApi(link)
       .then((data) => {
-        setCurrentUser({
-          name: data.name,
-          about: data.about,
-          avatar: data.avatar,
-          _id: data._id,
-        });
+        setCurrentUser(data);
       })
       .then(closeAllPopup())
       .catch((error) => console.log(error));
@@ -107,35 +97,49 @@ export default function App() {
   function handleCardLike(card) {
     const isLiked = card.likes.some((i) => i._id === currentUser._id);
     if (isLiked) {
-      api.deleteLike(card.cardId).then((data) => {
-        setCards((state) => state.map((c) => (c._id === card.cardId ? data : c))
-      );
-      })
+      api
+        .deleteLike(card.cardId)
+        .then((data) => {
+          setCards((state) =>
+            state.map((c) => (c._id === card.cardId ? data : c))
+          );
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     } else {
-      api.putLike(card.cardId).then((data) => {
-        setCards((state) => state.map((item) => (item._id === card.cardId ? data : item)));
-      }).catch((error) => {
-        console.log(error);
-      });
+      api
+        .putLike(card.cardId)
+        .then((data) => {
+          setCards((state) =>
+            state.map((item) => (item._id === card.cardId ? data : item))
+          );
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
   }
 
   function handleCardDelete(card) {
-    api.deleteCard(card.cardId)
-    .then(() => {
-      setCards((state) => state.filter((item) => item._id !== card.cardId));
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+    api
+      .deleteCard(card.cardId)
+      .then(() => {
+        setCards((state) => state.filter((item) => item._id !== card.cardId));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }
 
   function handleAddPlaceSubmit(card) {
-    api.setNewCard(card).then((newCard) => {
-      setCards([newCard, ...cards]);
-    })
-    .then(closeAllPopup())
-    .catch((error) => console.log(error));
+    api
+      .setNewCard(card)
+      .then((newCard) => {
+        setCards([newCard, ...cards]);
+      })
+      .then(closeAllPopup())
+      .catch((error) => console.log(error));
   }
 
   return (
@@ -166,11 +170,10 @@ export default function App() {
         />
 
         <AddPlacePopup
-        isOpen={isAddPlacePopupOpen}
-        onClose={closeAllPopup}
-        onAddPlace={handleAddPlaceSubmit}
+          isOpen={isAddPlacePopupOpen}
+          onClose={closeAllPopup}
+          onAddPlace={handleAddPlaceSubmit}
         />
-
 
         <PopupWithForm
           name="confirm"
