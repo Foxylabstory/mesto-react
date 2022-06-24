@@ -22,8 +22,10 @@ export default function AddPlacePopup({ isOpen, onClose, onAddPlace }) {
   }
 
   useEffect(() => {
+    if(isOpen) {
     setName("");
     setLink("");
+    }
   }, [isOpen]);
 
   return (
