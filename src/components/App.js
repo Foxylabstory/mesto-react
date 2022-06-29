@@ -1,5 +1,7 @@
 //import logo from './logo.svg';
 import { useEffect, useState } from "react";
+import { Redirect, Route, Switch } from "react-router-dom";
+import ProtectedRoute from "./ProtectedRoute";
 
 import Header from "./Header";
 import Main from "./Main";
@@ -23,9 +25,10 @@ export default function App() {
     name: "Загрузка",
     about: "информации",
     avatar: " ",
-    _id: " ",
+    _id: " "
   });
   const [cards, setCards] = useState([]);
+  const [loggedIn, setLoggedIn] =useState(false);
 
   useEffect(() => {
     api
@@ -73,12 +76,7 @@ export default function App() {
     api
       .setUserInfoToApi(user)
       .then((data) => {
-        setCurrentUser({
-          name: data.name,
-          about: data.about,
-          avatar: data.avatar,
-          _id: data._id,
-        });
+        setCurrentUser(data);
       })
       .then(closeAllPopup())
       .catch((error) => console.log(error));
@@ -146,15 +144,34 @@ export default function App() {
     <div className="page">
       <CurrentUserContext.Provider value={currentUser}>
         <Header />
-        <Main
-          onEditProfile={handleEditProfileClick}
-          onAddPlace={handleAddPlaceClick}
-          onEditAvatar={handleEditAvatarClick}
-          onCardClick={handleCardClick}
-          onCardLike={handleCardLike}
-          onCardDelete={handleCardDelete}
-          cards={cards}
-        />
+        <Switch>
+          <Route path="/sign-up">
+            <h2 style={{ color: "white" }}>sign-up</h2>
+          </Route>
+          <Route path="/sign-in">
+            <h2 style={{ color: "white" }}>sign-in</h2>
+          </Route>
+          <Route exact path="/">
+            ({loggedIn ? (
+              <Redirect to="/cards" />
+            ) : (
+              <Redirect to="/sign-in" />
+            )})
+            </Route>
+          <ProtectedRoute
+            path="/cards"
+            loggedIn={loggedIn}
+            component={Main}
+            onEditProfile={handleEditProfileClick}
+            onAddPlace={handleAddPlaceClick}
+            onEditAvatar={handleEditAvatarClick}
+            onCardClick={handleCardClick}
+            onCardLike={handleCardLike}
+            onCardDelete={handleCardDelete}
+            cards={cards}
+          ></ProtectedRoute>
+        </Switch>
+
         <Footer />
 
         <EditProfilePopup
