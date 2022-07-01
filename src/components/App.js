@@ -1,6 +1,6 @@
 //import logo from './logo.svg';
 import { useEffect, useState } from "react";
-import { Redirect, Route, Switch } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
 
 import Header from "./Header";
@@ -15,20 +15,24 @@ import ImagePopup from "./ImagePopup";
 import { api } from "../utils/Api";
 
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
+import Login from "./Login";
+import Register from "./Register";
+import InfoTooltip from "./InfoTooltip";
 
 export default function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
+  const [isInfoTooltipOpen, setIsInfoTooltipOpen] = useState(true);
   const [selectedCard, setSelectedCard] = useState({ name: "", link: "" });
   const [currentUser, setCurrentUser] = useState({
     name: "Загрузка",
     about: "информации",
     avatar: " ",
-    _id: " "
+    _id: " ",
   });
   const [cards, setCards] = useState([]);
-  const [loggedIn, setLoggedIn] =useState(false);
+  const [loggedIn, setLoggedIn] = useState(true);
 
   useEffect(() => {
     api
@@ -70,6 +74,7 @@ export default function App() {
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
     setSelectedCard({ name: "", link: "" });
+    setIsInfoTooltipOpen(false)
   }
 
   function handleUpdateUser(user) {
@@ -143,34 +148,29 @@ export default function App() {
   return (
     <div className="page">
       <CurrentUserContext.Provider value={currentUser}>
-        <Header />
-        <Switch>
-          <Route path="/sign-up">
-            <h2 style={{ color: "white" }}>sign-up</h2>
+        <Routes>
+          <Route path="/sign-up" element={<Register />} />
+          <Route path="/sign-in" element={<Login />} />
+          <Route path="/" element={<ProtectedRoute loggedIn={loggedIn} />}>
+            <Route
+              path="/"
+              element={
+                <>
+                  <Header link={"/sign-in"} linkText={"Выход"} isLoggedIn={loggedIn} />
+                  <Main
+                    onEditProfile={handleEditProfileClick}
+                    onAddPlace={handleAddPlaceClick}
+                    onEditAvatar={handleEditAvatarClick}
+                    onCardClick={handleCardClick}
+                    onCardLike={handleCardLike}
+                    onCardDelete={handleCardDelete}
+                    cards={cards}
+                  />
+                </>
+              }
+            />
           </Route>
-          <Route path="/sign-in">
-            <h2 style={{ color: "white" }}>sign-in</h2>
-          </Route>
-          <Route exact path="/">
-            ({loggedIn ? (
-              <Redirect to="/cards" />
-            ) : (
-              <Redirect to="/sign-in" />
-            )})
-            </Route>
-          <ProtectedRoute
-            path="/cards"
-            loggedIn={loggedIn}
-            component={Main}
-            onEditProfile={handleEditProfileClick}
-            onAddPlace={handleAddPlaceClick}
-            onEditAvatar={handleEditAvatarClick}
-            onCardClick={handleCardClick}
-            onCardLike={handleCardLike}
-            onCardDelete={handleCardDelete}
-            cards={cards}
-          ></ProtectedRoute>
-        </Switch>
+        </Routes>
 
         <Footer />
 
@@ -202,6 +202,14 @@ export default function App() {
         ></PopupWithForm>
 
         <ImagePopup card={selectedCard} onClose={closeAllPopup} />
+
+        <InfoTooltip
+          isOpen={isInfoTooltipOpen}
+          onClose={closeAllPopup}
+          name="info"
+          containerType="infoTooltip"
+          isOk={false}
+        />
       </CurrentUserContext.Provider>
     </div>
   );

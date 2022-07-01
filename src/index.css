@@ -6,6 +6,21 @@
 
 @import url("./blocks/header/header.css");
 @import url("./blocks/header/__logo/header__logo.css");
+@import url("./blocks/header/__container/header__container.css");
+@import url("./blocks/header/__email/header__email.css");
+@import url("./blocks/header/__link/header__link.css");
+
+@import url("./blocks/sign/sign.css");
+@import url("./blocks/sign/__fieldset/sign__fieldset.css");
+@import url("./blocks/sign/__header/sign__header.css");
+@import url("./blocks/sign/__label/sign__label.css");
+@import url("./blocks/sign/__input/sign__input.css");
+@import url("./blocks/sign/__input-error/sign__input-error.css");
+@import url("./blocks/sign/__submit-button/sign__submit-button.css");
+@import url("./blocks/sign/__question-container/sign__question-container.css");
+@import url("./blocks/sign/__question-container/_hidden/sign__question-container_hidden.css");
+@import url("./blocks/sign/__question/sign__question.css");
+@import url("./blocks/sign/__redirect/sign__redirect.css");
 
 @import url("./blocks/profile/profile.css");
 @import url("./blocks/profile/__avatar/profile__avatar.css");
@@ -50,6 +65,8 @@
 @import url('./blocks/popup/__figure/popup__figure.css');
 @import url('./blocks/popup/__figure-img/popup__figure-img.css');
 @import url('./blocks/popup/__figure-caption/popup__figure-caption.css');
+@import url("./blocks/popup/__img/popup__img.css");
+@import url("./blocks/popup/__caption/popup__caption.css");
 
 .ol {
   outline: 1px solid red;
