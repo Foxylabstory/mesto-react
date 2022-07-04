@@ -18,12 +18,13 @@ import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import Login from "./Login";
 import Register from "./Register";
 import InfoTooltip from "./InfoTooltip";
+import { authorization, register, getContent } from "../utils/auth";
 
 export default function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
-  const [isInfoTooltipOpen, setIsInfoTooltipOpen] = useState(true);
+  const [isInfoTooltipOpen, setIsInfoTooltipOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState({ name: "", link: "" });
   const [currentUser, setCurrentUser] = useState({
     name: "Загрузка",
@@ -53,31 +54,44 @@ export default function App() {
       });
   }, []);
 
-  function handleEditAvatarClick() {
+  //useEffect(() => {tokenCheck}, [])
+
+  const handleLogin = () => {
+    setLoggedIn(true);
+  };
+
+  const handleRegister = (password, email) => {
+    console.log(`Click ${email}, ${password}`);
+    register(password, email)
+      .then((response) => console.log(response))
+      .catch((err) => console.error(err));
+  };
+
+  const handleEditAvatarClick = () => {
     setIsEditAvatarPopupOpen(!isEditAvatarPopupOpen);
-  }
+  };
 
-  function handleEditProfileClick() {
+  const handleEditProfileClick = () => {
     setIsEditProfilePopupOpen(!isEditProfilePopupOpen);
-  }
+  };
 
-  function handleAddPlaceClick() {
+  const handleAddPlaceClick = () => {
     setIsAddPlacePopupOpen(!isAddPlacePopupOpen);
-  }
+  };
 
-  function handleCardClick(card) {
+  const handleCardClick = (card) => {
     setSelectedCard({ name: card.name, link: card.link });
-  }
+  };
 
-  function closeAllPopup() {
+  const closeAllPopup = () => {
     setIsEditAvatarPopupOpen(false);
     setIsEditProfilePopupOpen(false);
     setIsAddPlacePopupOpen(false);
     setSelectedCard({ name: "", link: "" });
-    setIsInfoTooltipOpen(false)
-  }
+    setIsInfoTooltipOpen(false);
+  };
 
-  function handleUpdateUser(user) {
+  const handleUpdateUser = (user) => {
     api
       .setUserInfoToApi(user)
       .then((data) => {
@@ -85,9 +99,9 @@ export default function App() {
       })
       .then(closeAllPopup())
       .catch((error) => console.log(error));
-  }
+  };
 
-  function handleUpdateAvatar(link) {
+  const handleUpdateAvatar = (link) => {
     api
       .setUserPicToApi(link)
       .then((data) => {
@@ -95,9 +109,9 @@ export default function App() {
       })
       .then(closeAllPopup())
       .catch((error) => console.log(error));
-  }
+  };
 
-  function handleCardLike(card) {
+  const handleCardLike = (card) => {
     const isLiked = card.likes.some((i) => i._id === currentUser._id);
     if (isLiked) {
       api
@@ -122,9 +136,9 @@ export default function App() {
           console.log(error);
         });
     }
-  }
+  };
 
-  function handleCardDelete(card) {
+  const handleCardDelete = (card) => {
     api
       .deleteCard(card.cardId)
       .then(() => {
@@ -133,9 +147,9 @@ export default function App() {
       .catch((error) => {
         console.log(error);
       });
-  }
+  };
 
-  function handleAddPlaceSubmit(card) {
+  const handleAddPlaceSubmit = (card) => {
     api
       .setNewCard(card)
       .then((newCard) => {
@@ -143,20 +157,27 @@ export default function App() {
       })
       .then(closeAllPopup())
       .catch((error) => console.log(error));
-  }
+  };
 
   return (
     <div className="page">
       <CurrentUserContext.Provider value={currentUser}>
         <Routes>
-          <Route path="/sign-up" element={<Register />} />
+          <Route
+            path="/sign-up"
+            element={<Register handleRegister={handleRegister} />}
+          />
           <Route path="/sign-in" element={<Login />} />
           <Route path="/" element={<ProtectedRoute loggedIn={loggedIn} />}>
             <Route
               path="/"
               element={
                 <>
-                  <Header link={"/sign-in"} linkText={"Выход"} isLoggedIn={loggedIn} />
+                  <Header
+                    link={"/sign-in"}
+                    linkText={"Выход"}
+                    isLoggedIn={loggedIn}
+                  />
                   <Main
                     onEditProfile={handleEditProfileClick}
                     onAddPlace={handleAddPlaceClick}

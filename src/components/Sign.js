@@ -1,10 +1,24 @@
 import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 const Sign = (props) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  /*const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");*/
+  const [authorizationData, setAuthorizationData] = useState({
+    password: "",
+    email: ""
+  });
 
+  //const [message, setMessage] = useState("")
+
+  const handleChange = (event) => {
+    const {name, value} = event.target;
+    setAuthorizationData((oldData) => ({
+      ...oldData,
+      [name]: value 
+    }));
+  }
+/*
   function handleChangeEmail(e) {
     setEmail(e.target.value);
   }
@@ -12,22 +26,28 @@ const Sign = (props) => {
   function handleChangePassword(e) {
     setPassword(e.target.value);
   }
-
-  function handleSubmit(e) {
-    e.preventDefault();
-    console.log(email);
-    console.log(password);
+*/
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    let { password, email } = authorizationData;
+    console.log(password, email);
+    props.handleSubmit( password, email );
+    setAuthorizationData({
+      password: "",
+      email: ""
+    })
+    
     /*props.onAction({
       email,
       password,
     });*/
   }
-
+/*
   useEffect(() => {
     setEmail("");
     setPassword("");
   }, []);
-
+*/
   return (
     <form className="sign" onSubmit={handleSubmit}>
       <fieldset className="sign__fieldset">
@@ -35,23 +55,25 @@ const Sign = (props) => {
         <label className="ol sign__label" htmlFor="email"></label>
         <input
           id="email"
+          name="email"
           className="sign__input"
           placeholder="Email"
           type="email"
           required
-          value={email}
-          onChange={handleChangeEmail}
+          value={authorizationData.email}
+          onChange={handleChange}
         ></input>
         <span id="email-error" className="ol sign__input-error"></span>
         <label className="ol sign__label" htmlFor="password"></label>
         <input
           id="password"
+          name="password"
           className="sign__input"
           placeholder="Пароль"
           type="password"
           required
-          value={password}
-          onChange={handleChangePassword}
+          value={authorizationData.password}
+          onChange={handleChange}
         ></input>
         <span className="ol sign__input-error" id="password-error"></span>
         <button className="sign__submit-button" type="submit">
