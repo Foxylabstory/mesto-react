@@ -7,7 +7,7 @@ const isOk = (response) => {
 };
 
 export const register = (password, email) => {
-    console.log(JSON.stringify({password, email}));
+    console.log(`Регистрация: ${JSON.stringify({password, email})}`);
   return fetch(`${BASE_URL}/signup`, {
     method: 'POST',
     headers: {
@@ -17,13 +17,14 @@ export const register = (password, email) => {
   }).then(isOk);
 };
 
-export const authorization = (email, password) => {
+export const authorization = (password, email) => {
+  console.log(`Авторизация: ${JSON.stringify({password, email})}`);
   return fetch(`${BASE_URL}/signin`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
+      'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ password, email }),
+    body: JSON.stringify({password, email})
   }).then(isOk);
 };
 
@@ -32,7 +33,7 @@ export const getContent = (token) => {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
+      "Authorization": `Bearer ${token}`,
     },
   }).then(isOk);
 };

@@ -10,7 +10,10 @@ const Register = (props) => {
         header="Регистрация"
         buttonText="Зарегистрироваться"
         hidden={false}
-        handleSubmit={props.handleRegister}
+        handleSubmit={props.onRegister}
+        passwordInput={props.passwordInput}
+        emailInput={props.emailInput}
+        handleChangeInput={props.handleChangeInput}
       />
     </>
   );

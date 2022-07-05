@@ -6,12 +6,8 @@ export default function Header(props) {
     <header className="header">
       <img className="header__logo" alt="Логотип сайта" src={logoPath} />
       <div className="header__container">
-        {props.isLoggedIn ? (
-          <p className="header__email">email@mail.com</p>
-        ) : (
-          <></>
-        )}
-        <Link className="header__link" to={props.link}>
+      <p className="header__email">{props.userEmail}</p>
+      <Link className="header__link" to={props.link} onClick={props.onSignOut} >
           {props.linkText}
         </Link>
       </div>

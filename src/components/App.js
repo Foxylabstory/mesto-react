@@ -1,6 +1,6 @@
 //import logo from './logo.svg';
 import { useEffect, useState } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import ProtectedRoute from "./ProtectedRoute";
 
 import Header from "./Header";
@@ -21,6 +21,7 @@ import InfoTooltip from "./InfoTooltip";
 import { authorization, register, getContent } from "../utils/auth";
 
 export default function App() {
+  const navigate = useNavigate();
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
@@ -33,9 +34,24 @@ export default function App() {
     _id: " ",
   });
   const [cards, setCards] = useState([]);
-  const [loggedIn, setLoggedIn] = useState(true);
+  const [registrated, setRegistrated] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [userEmail, setUserEmail] = useState("email@mail.com");
+  const [authorizationData, setAuthorizationData] = useState({
+    password: "",
+    email: "",
+  });
+
+  const handleChangeInput = (event) => {
+    const { name, value } = event.target;
+    setAuthorizationData((oldData) => ({
+      ...oldData,
+      [name]: value,
+    }));
+  };
 
   useEffect(() => {
+    tokenCheck();
     api
       .getUserInfo()
       .then((data) => {
@@ -54,16 +70,55 @@ export default function App() {
       });
   }, []);
 
-  //useEffect(() => {tokenCheck}, [])
+  const logOut = () => {
+    localStorage.removeItem("jwt");
+    setLoggedIn(false);
+    navigate('/sign-in');
+  }
 
-  const handleLogin = () => {
-    setLoggedIn(true);
+  const tokenCheck = () => {
+    const jwt = localStorage.getItem("jwt");
+    getContent(jwt).then((response) => {
+      setUserEmail(response.data.email);
+      setLoggedIn(true);      
+    }).then(() => navigate("/"))
+    .catch((err) => console.error(err));
+  }
+
+  const handleRegister = () => {
+    setRegistrated(false);
+    const { password, email } = authorizationData;
+    register(password, email)
+      .then((response) => {
+        if (response.data.email) {
+          setRegistrated(true);
+          setIsInfoTooltipOpen(true);
+          navigate("/sign-in");
+        }
+      })
+      .then(() => {
+        setAuthorizationData({ password: "", email: "" });
+      })
+      .catch((err) => {
+        setIsInfoTooltipOpen(true);
+        console.error(err);
+      });
   };
 
-  const handleRegister = (password, email) => {
-    console.log(`Click ${email}, ${password}`);
-    register(password, email)
-      .then((response) => console.log(response))
+  const handleLogin = () => {
+    const { password, email } = authorizationData;
+    authorization(password, email)
+      .then((response) => {
+        if (response.token) {
+          localStorage.setItem("jwt", response.token);
+          setUserEmail(email);
+          setLoggedIn(true);
+          navigate("/");
+        }
+      })
+      .then(() => {
+        setAuthorizationData({ password: "", email: "" });
+      })
       .catch((err) => console.error(err));
   };
 
@@ -165,9 +220,26 @@ export default function App() {
         <Routes>
           <Route
             path="/sign-up"
-            element={<Register handleRegister={handleRegister} />}
+            element={
+              <Register
+                onRegister={handleRegister}
+                passowrdInput={authorizationData.password}
+                emailInput={authorizationData.email}
+                handleChangeInput={handleChangeInput}
+              />
+            }
           />
-          <Route path="/sign-in" element={<Login />} />
+          <Route
+            path="/sign-in"
+            element={
+              <Login
+                onLogin={handleLogin}
+                passowrdInput={authorizationData.password}
+                emailInput={authorizationData.email}
+                handleChangeInput={handleChangeInput}
+              />
+            }
+          />
           <Route path="/" element={<ProtectedRoute loggedIn={loggedIn} />}>
             <Route
               path="/"
@@ -175,8 +247,9 @@ export default function App() {
                 <>
                   <Header
                     link={"/sign-in"}
+                    userEmail={userEmail}
                     linkText={"Выход"}
-                    isLoggedIn={loggedIn}
+                    onSignOut={logOut}
                   />
                   <Main
                     onEditProfile={handleEditProfileClick}
@@ -229,7 +302,7 @@ export default function App() {
           onClose={closeAllPopup}
           name="info"
           containerType="infoTooltip"
-          isOk={false}
+          isOk={registrated}
         />
       </CurrentUserContext.Provider>
     </div>
