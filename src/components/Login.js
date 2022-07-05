@@ -1,12 +1,19 @@
 import Header from "./Header";
 import Sign from "./Sign";
 
-const Login = () => {
-  
+const Login = (props) => {
   return (
     <>
       <Header link={"/sign-up"} linkText={"Регистрация"} />
-      <Sign header="Вход" buttonText="Войти" hidden={true} />
+      <Sign
+        header="Вход"
+        buttonText="Войти"
+        hidden={true}
+        handleSubmit={props.onLogin}
+        passwordInput={props.passwordInput}
+        emailInput={props.emailInput}
+        handleChangeInput={props.handleChangeInput}
+      />
     </>
   );
 };
